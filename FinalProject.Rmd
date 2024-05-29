@@ -1,0 +1,219 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+```
+
+
+```{r}
+#Importing Dataset In to Rstuido 
+dt=read.csv("C:/Users/Rutvij/Downloads/diabetes.csv")
+```
+```{r}
+#Showing six records of the dataset 
+head(dt)
+```
+```{r}
+#to ge the shape or dimension of dataset
+dim(dt)
+```
+```{r}
+#to get the data type of each attributes. 
+sapply(dt, class)
+```
+```{r}
+# to check attributes contains null value or not. 
+colSums(is.na(dt))
+```
+```{r}
+#boxplot is used to get the information that attribute has outliers or not. 
+boxplot(dt$Pregnancies)
+```
+```{r}
+## finding IQR to remove outliers
+Q1= quantile(dt$Pregnancies,0.25)
+Q3=quantile(dt$Pregnancies,0.75)
+IQR=Q3-Q1
+ 
+UpperBound=Q3+1.5*IQR
+Lowerbound=Q1-1.5*IQR
+#removing outliers 
+dt=dt[dt$Pregnancies <= UpperBound,]
+
+#checking again about outliers
+boxplot(dt$Pregnancies)
+
+
+
+```
+```{r}
+boxplot(dt$Glucose)
+```
+```{r}
+## finding IQR 
+Q1= quantile(dt$Glucose,0.25)
+Q3=quantile(dt$Glucose,0.75)
+IQR=Q3-Q1
+ 
+UpperBound=Q3+1.5*IQR
+Lowerbound=Q1-1.5*IQR
+
+dt=dt[dt$Glucose >= Lowerbound,]
+boxplot(dt$Glucose)
+```
+```{r}
+boxplot(dt$BloodPressure)
+```
+```{r}
+#when you have lot of outlier you may not ignore it, so you need to handle it by transforming them (log transfermation)
+dt$BloodPressure <- log(dt$BloodPressure + 1)
+boxplot(dt$BloodPressure)
+```
+```{r}
+boxplot(dt$SkinThickness)
+```
+```{r}
+## finding IQR 
+Q1= quantile(dt$SkinThickness,0.25)
+Q3=quantile(dt$SkinThickness,0.75)
+IQR=Q3-Q1
+ 
+UpperBound=Q3+1.5*IQR
+Lowerbound=Q1-1.5*IQR
+
+dt=dt[dt$SkinThickness <= UpperBound,]
+boxplot(dt$SkinThickness)
+```
+```{r}
+boxplot(dt$Insulin)
+```
+```{r}
+dt$Insulin <- log(dt$Insulin + 1)
+boxplot(dt$Insulin)
+```
+```{r}
+boxplot(dt$BMI)
+```
+```{r}
+dt$BMI <- log(dt$BMI + 1)
+boxplot(dt$BMI)
+```
+```{r}
+boxplot(dt$DiabetesPedigreeFunction)
+```
+```{r}
+dt$DiabetesPedigreeFunction <- log(dt$DiabetesPedigreeFunction + 1)
+boxplot(dt$DiabetesPedigreeFunction)
+```
+```{r}
+## finding IQR 
+Q1= quantile(dt$DiabetesPedigreeFunction,0.25)
+Q3=quantile(dt$DiabetesPedigreeFunction,0.75)
+IQR=Q3-Q1
+ 
+UpperBound=Q3+1.5*IQR
+Lowerbound=Q1-1.5*IQR
+
+dt=dt[dt$DiabetesPedigreeFunction <= UpperBound,]
+boxplot(dt$DiabetesPedigreeFunction)
+```
+```{r}
+boxplot(dt$Age)
+```
+```{r}
+## finding IQR 
+Q1= quantile(dt$Age,0.25)
+Q3=quantile(dt$Age,0.75)
+IQR=Q3-Q1
+ 
+UpperBound=Q3+1.5*IQR
+Lowerbound=Q1-1.5*IQR
+
+dt=dt[dt$Age <= UpperBound,]
+boxplot(dt$Age)
+```
+```{r}
+boxplot(dt$Outcome)
+```
+```{r}
+#converting integer to categorical (factor in R)
+dt$Outcome=as.factor(dt$Outcome)
+#converting factor into numeric because we need to perform statistics on our data
+dt$Outcome=as.numeric(dt$Outcome)
+unique(dt$Outcome)
+```
+```{r}
+#performimng descriptive statistics analysis 
+summary(dt)
+```
+```{r}
+#finding the variance of each attributes in dataset
+
+print('Variance_Pregnancies:')
+var(dt$Pregnancies)
+print("Variance_Glucose")
+var(dt$Glucose)
+print("Variance_BloodPressure")
+var(dt$BloodPressure)
+print("Variance_SkinThickness")
+var(dt$SkinThickness)
+print("Variance_Insulin")
+var(dt$Insulin)
+print("Variance_BMI")
+var(dt$BMI)
+print("Variance_DiabetesPedigreeFunction")
+var(dt$DiabetesPedigreeFunction)
+print("Variance_Age")
+var(dt$Age)
+```
+```{r}
+
+```
+```{r}
+#Hypothesis Formulation: 
+#H0:There is no significat relationship between BMI and diabetes. (Null Hypothesis)
+#H1:There is a significat relationship between BMI and diabetes.  (Alternative Hypothesis)
+```
+```{r}
+#Correlation analysis is a statistical technique used to investigate the strength and direction of a linear relationship between two or more numerical variables. 
+
+#The most common correlation test is Pearson's correlation coefficient, which measures the strength and direction of the linear relationship.
+
+library(stats)
+COR_TEST_RESULT=cor.test(dt$BMI,dt$Outcome)
+
+```
+```{r}
+correlation_coefficient <- COR_TEST_RESULT$estimate  # Pearson's correlation coefficient (r)
+correlation_coefficient
+p_value <- COR_TEST_RESULT$p.value  # P-value
+p_value
+```
+```{r}
+# Compare p-value to significance level (α = 0.05)
+if (p_value < 0.05) {
+  print("Reject the null hypothesis. There is evidence of a significant linear relationship.")
+} else {
+  print("Fail to reject the null hypothesis. There is no significant linear relationship.")
+}
+```
+```{r}
+#Bar plot to show the relation between one categorical and one numerical data variable 
+library(ggplot2)
+#Here, Outcome is categorical as it has two values. Moreover, BMI is a measurable value. 
+ggplot(dt, aes(x = dt$Outcome, y = dt$BMI, fill = dt$Outcome)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Bar Graph", x = "Category", y = "Value")
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
